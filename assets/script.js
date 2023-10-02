@@ -1,82 +1,83 @@
 function initPage() {
-const cityEl = document.getElementById("enter-city");
-const searchEl = document.getElementById("search-button");
-const clearEl = document.getElementById("clear-history");
-const nameEl = document.getElementById("city-name");
-const currentPicEl = document.getElementById("current-pic");
-const currentTempEl = document.getElementById("temprature");
-const currentHumidityEl = document.getElementById("humidity");
-const currentWindEl = document.getElementById("wind-speed");
-const currentUVEl = document.getElementById("UV-index");
-const historyEl = document.getElementById("history");
+var cityEl = document.getElementById("enter-city");
+var searchEl = document.getElementById("search-button");
+var clearEl = document.getElementById("clear-history");
+var nameEl = document.getElementById("city-name");
+var currentPicEl = document.getElementById("current-pic");
+var currentTempEl = document.getElementById("temprature");
+var currentHumidityEl = document.getElementById("humidity");
+var currentWindEl = document.getElementById("wind-speed");
+var historyEl = document.getElementById("history");
 var fivedayEl = document.getElementById("fiveday-header");
-var searchHistory = JSON.parse(localStorage.getItem("search")) || [];
+var searchHistory = JSON.parse(localStorage.getItem("search"));
 
-const APIkey = "bd4c39d9391cfb9dcf2a0b4f1bdac031";
-
-function getWeather(cityName) {
-    var requestUrl = "https://api.openweathermap.org/data/2.5/forecast?q=" + cityName + "&appid" + APIkey;
-  fetch(requestUrl)
-    .then(function (response) {
-        console.log(response);
-        if (response.status === 200){
+function getWeather(response) {
+var requestUrl = "https://api.openweathermap.org/data/2.5/forecast?lat=31.4229&lon=103.4932&appid=bd4c39d9391cfb9dcf2a0b4f1bdac031"
+fetch(requestUrl) .then(function (response) {
+console.log(response);
+if (response.status === 200){
 todayweather.El.classList.remove("d-none");
  }
 return response.json();
 })
 
-const currentDate = new Date(response.data.dt * 1000);
-const day = currentDate.getDate();
-const month = currentDate.getMonth(); 
-const year = currentDate.getFullYear();
+var currentDate = new Date(response.data.dt * 1000);
+var day = currentDate.getDate();
+var month = currentDate.getMonth(); 
+var year = currentDate.getFullYear();
 nameEl.innerHTML = response.data.name + "(" + month + day + "/" + year + ")";
-let weatherPic = response.data.weather[0].icon;
-currentPicEl.setAttribute("src", "https://openweathermap.org/img/wn/" + weatherPic + "@2x.png");
+var weatherPic = response.data.weather[0].icon;
+currentPicEl.setAttribute("src", "https://openweathermap.org/img/wn/" + weatherPic);
 currentPicEl.setAttribute("alt", response.data.weather[0].description);
-currentTempEl.innerHTML = "temperature: " + k2f(response.data.main.temp) + "&176F";
-currentHumidityEl.innerHTML = "humidity: " + response.data.main.humidity + "%";
+currentTempEl.innerHTML = "temperature: " + (response.data.main.temp);
+currentHumidityEl.innerHTML = "humidity: " + response.data.main.humidity;
 currentWindEl.innerHTML = "Wind Speed: " + response.wind.speed + "MPH";
 
-var lat = response.data.coord.lat;
-var lon = response.data.coord.lon;
-var UVQueryURL =  "https://api.openweathermap.org/data/2.5/forecast?lat=" + lat + "&lon" + lon + "&appid" + APIkey + "&cnt=1";
-fetch(UVQueryURL)
-.then(function (response) {
-    let UVIndex = document.createElement("span");
-    if (response.data[0].value < 4) {
-        UVIndex.setAttribute("class", "badge Badge-success");
-    }
-    else if (response.data[0].value < 8) {
-        UVIndex.setAttribute("class", "Badge Badge-warning");
-    }
-    else {UVIndex.setAttribute("class", "badbge badge-danger");
-}
-console.log(response.data[0].value)
-UVIndex.innerHTML + response.data[0].value;
-currentUVEl.innerText = "UV Index: ";
-currentUVEl.append(UVIndex);
-});
 
-let cityID = response.data.id;
-let forecastURL = "https://api.openweathermap.org/data/2.5/forecast?id=" + cityID + "&appid" + APIkey;
+var forecastURL = "https://api.openweathermap.org/data/2.5/forecast?lat=31.4229&lon=103.4932&appid=bd4c39d9391cfb9dcf2a0b4f1bdac031";
 fetch(forecastURL)
 .then(function (response) {
-    fivedayEl.classList.remove("d-none");
-    const forecastEl = document.querySelectorAll(".forecast");
-    for (i = 0; i < forecastEl.length, i++) {
-        forecastEl[i].innerHTML ="";
-        const forecastIndex = i * 8 + 4;
-        const forecastDate = new Date(response.data.list[forecastIndex].dt *1000);
-        const forecastDay = forecastDate.getDate();
-        const forecastMonth = forecastDate.getMonth() + 1;
-        const forecastYear = forecastDate.getFullYear();
-        const forecastDateEl = forecastDate.createElement("p");
-        forecastDateEl
-        forecastDateEl
-    }
-}
+fivedayEl.classList.remove("d-none");
+var forecastEl = document.querySelectorAll(".forecast");
+for (i = 0; i < forecastEl.length; i++) {
+forecastEl[i].innerHTML ="";
+var forecastDate = new Date(response.data.list[forecastIndex].dt *1000);
+var forecastDay = forecastDate.getDate();
+var forecastMonth = forecastDate.getMonth() + 1;
+var forecastYear = forecastDate.getFullYear();
+var forecastDateEl = forecastDate.createElement("p");
+forecastDateEl.setAttribute("class", "mt-3 mb-0 forecast-date");
+forecastDateEl.innerHTML = forecastMonth + "/" + forecastDay + "/" + forecastYear
+forecastEl[i].append(forecastDateEl);
 
+var forecastWeatherEl = document.createElement("img");
+forecastWeatherEl.setAttribute("src", "https://openweather.org/img/wn/" + response.data.list[forecastIndex].weather[0].icon);
+forecastWeatherEl.setAttribute("alt", response.data.list[forecastIndex].weather[0].description);
+forecastEl[i].append(forecastDateEl);
+var forecastTempEl = document.createElement("p");
+forecastTempEl.innerHTML = "temp: " + (response.data.list[forecastIndex].main.temp);
+forecastEl[i].append(forecastTempEl);
+var forecastHumidityEl = document.createElement("p");
+forecastHumidiityEl.innerHTML = "humidity: " + response.data.list[forecastIndex].main.humidity;
+forecastEl[i].append(forecastHumidityEl);
 
+}})};
 
+searchEl.addEventListener("click", function() {
+    var searchTerm = cityEl.valvue;
+    getWeather(searchTerm);
+    searchHistory.push(searchTerm);
+    localStorage.setItem("search", JSON.stringify(searchHistory));
+    renderSearchHistory();
+})
 
-}
+clearEl.addEventListener("click", function () {
+    localStorage.clear();
+    searchHistory = [];
+    renderSearchHistory();
+})
+
+function renderSearchHistory() {
+    historyEl.innerHTML = "";
+    for (let i = 0; i < searchHistory.length; i++) {
+}}};
