@@ -18,4 +18,5 @@ WHEN I click on a city in the search history
 THEN I am again presented with current and future conditions for that city
 
 ## Links
-https://github.com/Cbaca4/Weather-dashboard
+[github]https://github.com/Cbaca4/Weather-dashboard
+[homework]https://cbaca4.github.io/Weather-dashboard/
